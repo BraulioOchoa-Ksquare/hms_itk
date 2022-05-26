@@ -1,6 +1,28 @@
 # hms_itk
+
 Final project of the course
 
+## Install dependencies
+### npm install
+### npm install -D
+
+## How to run
+### npm run dev
+
+## Enviroment Variables
+PORT = 5000
+
+DB_NAME = hms_system
+DB_USERNAME = postgres
+DB_PASSWORD = admin
+DB_HOST = localhost
+
+GOOGLE_APPLICATION_CREDENTIALS=C:\Users\Topaz\OneDrive\Documentos\GitHub\credentials\itk-5g-users-b93f2-firebase-adminsdk-nsdap-0d8055cfb9.json
+
+SUPER_USER = admin@test.com
+
+## Postman Collection
+https://www.postman.com/collections/c3ee84ac66308a831484
 
 ## User Model
 ### This user model is used to create the users of the platform and this is the first part
@@ -70,3 +92,4 @@ interface Appointment{
   patientId: number; //Foreing Key from the Interface Patient this would help us to have de id of the patient in the Appointment
   status: boolean; //In case that the appointment was cancel it will be false
 }
+
