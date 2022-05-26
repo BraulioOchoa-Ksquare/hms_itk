@@ -24,9 +24,9 @@ const createAppointment = (date, hour, DoctorId, PatientId, status) => __awaiter
     }
 });
 exports.createAppointment = createAppointment;
-const appointmentListPatient = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const appointmentListPatient = (id, limit, offset) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const appointmentList = yield Appointment_models_1.Appointment.findAll({ where: { PatientId: id } });
+        const appointmentList = yield Appointment_models_1.Appointment.findAll({ where: { PatientId: id }, limit: limit, offset: offset });
         console.log("Appontment list");
         return appointmentList;
     }
@@ -59,10 +59,10 @@ const appointmentDisabledPatient = (id, status) => __awaiter(void 0, void 0, voi
 exports.appointmentDisabledPatient = appointmentDisabledPatient;
 //============================ END PATIENTS ==================================
 //============================ DOCTORS ==================================
-const appointmentListDoctor = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const appointmentListDoctor = (id, limit, offset) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const appointmentList = yield Appointment_models_1.Appointment.findAll({ where: { DoctorId: id } });
-        console.log("Appontment list");
+        const appointmentList = yield Appointment_models_1.Appointment.findAll({ where: { DoctorId: id }, limit: limit, offset: offset });
+        console.log("Appointment list");
         return appointmentList;
     }
     catch (error) {

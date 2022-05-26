@@ -18,9 +18,13 @@ status: boolean) =>{
     }
   };
 
-  export const appointmentListPatient = async (id: number) =>{
+  export const appointmentListPatient = async (
+    id: number, 
+    limit?: number,
+    offset?: number
+    ) =>{
         try {
-          const appointmentList = await Appointment.findAll({where: {PatientId: id}});
+          const appointmentList = await Appointment.findAll({where: {PatientId: id}, limit: limit, offset: offset});
           console.log("Appontment list");
           return appointmentList;
         } catch (error) {
@@ -53,10 +57,14 @@ status: boolean) =>{
 //============================ END PATIENTS ==================================
 
 //============================ DOCTORS ==================================
-export const appointmentListDoctor = async (id: number) =>{
+export const appointmentListDoctor = async (
+  id: number,
+  limit?: number,
+  offset?: number
+  ) =>{
   try {
-    const appointmentList = await Appointment.findAll({where: {DoctorId: id}});
-    console.log("Appontment list");
+    const appointmentList = await Appointment.findAll({where: {DoctorId: id}, limit: limit, offset: offset});
+    console.log("Appointment list");
     return appointmentList;
   } catch (error) {
     console.log(error);
@@ -75,3 +83,4 @@ export const updateDateHourApp = async ( id: number, date?:string, hour?:string)
     console.log(error);
   }
 };
+

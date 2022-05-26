@@ -15,6 +15,7 @@ const methods_1 = require("../firebase/methods");
 const admin_handlers_1 = require("../handlers/admin.handlers");
 const hasRole_1 = require("../middlewares/hasRole");
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
+const Appointment_models_1 = require("../models/Appointment.models");
 exports.AdminRoute = (0, express_1.Router)();
 exports.AdminRoute.post('/createUserDoctor', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { displayName, email, password, role } = req.body;
@@ -55,8 +56,9 @@ exports.AdminRoute.get('/appointmentListAll', isAuthenticated_1.isAuthenticated,
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { limit, offset } = req.query;
     try {
-        const appointmentsListed = yield (0, admin_handlers_1.appointmentListAll)();
+        const appointmentsListed = yield (0, admin_handlers_1.appointmentListAll)(limit ? +limit : 10, offset ? +offset : 0);
         res.statusCode = 201;
         res.send({ appointmentsListed });
     }
@@ -64,34 +66,30 @@ exports.AdminRoute.get('/appointmentListAll', isAuthenticated_1.isAuthenticated,
         res.status(500).send(error);
     }
 }));
-exports.AdminRoute.get('/appointmentListAll/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+//Filter by PatientId, DoctorId, status and order by ASC and DESC
+exports.AdminRoute.get('/searchAdminApp/:order?', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
-    allowSameUser: true,
+    allowSameUser: false,
 }), // Solamente el SU pueda acceder
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let ofset = req.query.page;
-    let limit = req.query.limit;
     try {
-        const appointmentsListed = yield (0, admin_handlers_1.appointmentListAll)();
+        const { PatientId, DoctorId, status } = JSON.parse(req.query.where || "{}");
+        const where = { PatientId, DoctorId, status };
+        Object.keys(where).forEach((key) => {
+            where[key] === undefined ? delete where[key] : {};
+        });
+        let { order } = req.params;
+        if (order !== "ASC" && order !== "DESC") {
+            order = "ASC";
+        }
+        const searchAdminApp = yield Appointment_models_1.Appointment.findAll({
+            where,
+            order: [["id", order]]
+        });
         res.statusCode = 201;
-        res.send({ appointmentsListed });
+        res.send({ searchAdminApp });
     }
     catch (error) {
-        res.status(500).send(error);
-    }
-}));
-exports.AdminRoute.get('/adminAppointmentListDoctor/:DoctorId', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
-    roles: ["admin"],
-    allowSameUser: true,
-}), // Solamente el SU pueda acceder
-(req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { DoctorId } = req.params;
-    try {
-        const adminAppointmentList = yield (0, admin_handlers_1.adminAppointmentListDoctor)(+DoctorId);
-        res.statusCode = 201;
-        res.send({ adminAppointmentList });
-    }
-    catch (error) {
-        res.status(500).send(error);
+        console.log(error);
     }
 }));

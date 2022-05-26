@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminAppointmentListDoctor = exports.adminAppointmentListPatient = exports.appointmentListAll = exports.disableUser = exports.createUserDoctor = void 0;
+exports.appointmentListAll = exports.disableUser = exports.createUserDoctor = void 0;
 const admin = __importStar(require("firebase-admin"));
 const Appointment_models_1 = require("../models/Appointment.models");
 const createUserDoctor = (displayName, email, password, role) => __awaiter(void 0, void 0, void 0, function* () {
@@ -62,9 +62,9 @@ const disableUser = (uid, disabled) => __awaiter(void 0, void 0, void 0, functio
     return mapToUser(user);
 });
 exports.disableUser = disableUser;
-const appointmentListAll = () => __awaiter(void 0, void 0, void 0, function* () {
+const appointmentListAll = (limit, offset) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const appointmentsListed = yield Appointment_models_1.Appointment.findAll({ order: ["id"] });
+        const appointmentsListed = yield Appointment_models_1.Appointment.findAll({ order: ["id"], limit: limit, offset: offset });
         console.log("Appontment list");
         return appointmentsListed;
     }
@@ -73,25 +73,3 @@ const appointmentListAll = () => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.appointmentListAll = appointmentListAll;
-const adminAppointmentListPatient = (PatientId) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const adminAppointmentList = yield Appointment_models_1.Appointment.findAll({ where: { PatientId: PatientId } });
-        console.log("Appontment list");
-        return adminAppointmentList;
-    }
-    catch (error) {
-        console.log(error);
-    }
-});
-exports.adminAppointmentListPatient = adminAppointmentListPatient;
-const adminAppointmentListDoctor = (DoctorId) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const adminAppointmentList = yield Appointment_models_1.Appointment.findAll({ where: { DoctorId: DoctorId } });
-        console.log("Appontment list");
-        return adminAppointmentList;
-    }
-    catch (error) {
-        console.log(error);
-    }
-});
-exports.adminAppointmentListDoctor = adminAppointmentListDoctor;

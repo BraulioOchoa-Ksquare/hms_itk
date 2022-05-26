@@ -33,9 +33,14 @@ export const createUserDoctor = async (displayName: string, email: string, passw
     return mapToUser(user);
   };
 
-  export const appointmentListAll = async () =>{
+  export const appointmentListAll = async (
+    limit?: number,
+    offset?: number
+  ) =>{
     try {
-      const appointmentsListed = await Appointment.findAll({order: ["id"]});
+      const appointmentsListed = await Appointment.findAll(
+        {order: ["id"], limit: limit, offset: offset}
+      );
       console.log("Appontment list");
       return appointmentsListed;
     } catch (error) {
@@ -43,22 +48,4 @@ export const createUserDoctor = async (displayName: string, email: string, passw
     }
   };
 
-  export const adminAppointmentListPatient = async (PatientId: number) =>{
-    try {
-      const adminAppointmentList = await Appointment.findAll({where: {PatientId: PatientId}});
-      console.log("Appontment list");
-      return adminAppointmentList;
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  export const adminAppointmentListDoctor = async (DoctorId: number) =>{
-    try {
-      const adminAppointmentList = await Appointment.findAll({where: {DoctorId: DoctorId}});
-      console.log("Appontment list");
-      return adminAppointmentList;
-    } catch (error) {
-      console.log(error);
-    }
-  };

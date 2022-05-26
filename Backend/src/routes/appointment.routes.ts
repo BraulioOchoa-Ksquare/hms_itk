@@ -40,9 +40,9 @@ AppointmentRoute.get(
   }), // Solamente el SU pueda acceder
   async (req: Request, res: Response) => {
   const {id} = req.params;
-
+  const { limit, offset} = req.query
   try {
-    const appointmentList = await appointmentListPatient(+id);
+    const appointmentList = await appointmentListPatient(+id, limit? +limit: 10, offset? +offset: 0);
      res.statusCode = 201;
      res.send({appointmentList});
   } catch (error) {
@@ -99,9 +99,9 @@ AppointmentRoute.get(
   }), // Solamente el SU pueda acceder
   async (req: Request, res: Response) => {
   const {id} = req.params;
-
+  const { limit, offset} = req.query
   try {
-    const appointmentList = await appointmentListDoctor(+id);
+    const appointmentList = await appointmentListDoctor(+id, limit? +limit: 10, offset? +offset: 0);
      res.statusCode = 201;
      res.send({appointmentList});
   } catch (error) {

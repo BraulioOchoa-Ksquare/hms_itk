@@ -1,8 +1,9 @@
 import { Router, Request, Response } from "express";
 import { createUser} from "../firebase/methods";
-import { adminAppointmentListDoctor, adminAppointmentListPatient, appointmentListAll, disableUser } from "../handlers/admin.handlers";
+import {appointmentListAll, disableUser } from "../handlers/admin.handlers";
 import { hasRole } from "../middlewares/hasRole";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { Appointment } from "../models/Appointment.models";
 export const AdminRoute = Router();
 
 AdminRoute.post('/createUserDoctor', async (req: Request, res: Response) => {
@@ -53,8 +54,9 @@ AdminRoute.patch(
       allowSameUser: true,
     }), // Solamente el SU pueda acceder
     async (req: Request, res: Response) => {
+      const { limit, offset} = req.query
       try {
-         const appointmentsListed = await appointmentListAll();
+         const appointmentsListed = await appointmentListAll( limit? +limit: 10, offset? +offset: 0);
          res.statusCode = 201;
          res.send({appointmentsListed});
       } catch (error) {
@@ -62,39 +64,33 @@ AdminRoute.patch(
       }
     });
 
+    //Filter by PatientId, DoctorId, status and order by ASC and DESC
     AdminRoute.get(
-      '/appointmentListAll/',
+      '/searchAdminApp/:order?',
       isAuthenticated,
       hasRole({
         roles: ["admin"],
-        allowSameUser: true,
+        allowSameUser: false,
       }), // Solamente el SU pueda acceder
       async (req: Request, res: Response) => {
-        let ofset = req.query.page;
-        let limit = req.query.limit
         try {
-           const appointmentsListed = await appointmentListAll();
-           res.statusCode = 201;
-           res.send({appointmentsListed});
-        } catch (error) {
-          res.status(500).send(error);
-        }
-      });
+          const {PatientId, DoctorId, status} = JSON.parse(req.query.where as string || "{}")
+          const where = {PatientId,DoctorId,status};
+          (Object.keys(where) as (keyof typeof where)[]).forEach((key) => {
+            where[key] === undefined ? delete where[key] : {}
+          });
 
-   AdminRoute.get(
-      '/adminAppointmentListDoctor/:DoctorId',
-      isAuthenticated,
-      hasRole({
-        roles: ["admin"],
-        allowSameUser: true,
-      }), // Solamente el SU pueda acceder
-      async (req: Request, res: Response) => {
-      const {DoctorId} = req.params;
-      try {
-        const adminAppointmentList = await adminAppointmentListDoctor(+DoctorId);
-         res.statusCode = 201;
-         res.send({adminAppointmentList});
+          let {order} = req.params;
+          if(order !== "ASC" && order !== "DESC"){
+            order = "ASC";
+          }
+          const searchAdminApp = await Appointment.findAll({
+            where,
+            order: [["id", order]]
+          });
+          res.statusCode = 201;
+          res.send({searchAdminApp});
       } catch (error) {
-        res.status(500).send(error);
+      console.log(error);
       }
     });

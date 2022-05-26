@@ -42,8 +42,9 @@ exports.AppointmentRoute.get('/appointmentListPatient/:id', isAuthenticated_1.is
 }), // Solamente el SU pueda acceder
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    const { limit, offset } = req.query;
     try {
-        const appointmentList = yield (0, appointment_handlers_1.appointmentListPatient)(+id);
+        const appointmentList = yield (0, appointment_handlers_1.appointmentListPatient)(+id, limit ? +limit : 10, offset ? +offset : 0);
         res.statusCode = 201;
         res.send({ appointmentList });
     }
@@ -90,8 +91,9 @@ exports.AppointmentRoute.get('/appointmentListDoctor/:id', isAuthenticated_1.isA
 }), // Solamente el SU pueda acceder
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    const { limit, offset } = req.query;
     try {
-        const appointmentList = yield (0, appointment_handlers_1.appointmentListDoctor)(+id);
+        const appointmentList = yield (0, appointment_handlers_1.appointmentListDoctor)(+id, limit ? +limit : 10, offset ? +offset : 0);
         res.statusCode = 201;
         res.send({ appointmentList });
     }
