@@ -3,11 +3,11 @@
 Final project of the course
 
 ## Install dependencies
-npm install
-npm install -D
+### npm install
+### npm install -D
 
 ## How to run
-npm run dev
+### npm run dev
 
 ## Enviroment Variables
 PORT = 5000
