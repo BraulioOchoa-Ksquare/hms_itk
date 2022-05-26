@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProfileRoute = void 0;
+exports.ProfileRoute = void 0;
 //Esta ruta usa la logica de handlers
 const express_1 = require("express");
 const profile_handlers_1 = require("../handlers/profile.handlers");
-exports.createProfileRoute = (0, express_1.Router)();
-exports.createProfileRoute.post('/createProfile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.ProfileRoute = (0, express_1.Router)();
+exports.ProfileRoute.post('/createProfile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid, id, firstName, lastName, address, phoneNumber } = req.body;
     if (!uid || !firstName || !lastName || !address || !phoneNumber) {
         res.status(400);

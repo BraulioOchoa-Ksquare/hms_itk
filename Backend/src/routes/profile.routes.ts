@@ -1,9 +1,9 @@
 //Esta ruta usa la logica de handlers
 import { Router, Request, Response } from "express";
 import { createProfile } from "../handlers/profile.handlers";
-export const createProfileRoute = Router();
+export const ProfileRoute = Router();
 
-createProfileRoute.post('/createProfile', async (req: Request, res: Response) => {
+ProfileRoute.post('/createProfile', async (req: Request, res: Response) => {
   const {uid, id, firstName, lastName, address, phoneNumber} = req.body;
 
   if (!uid || !firstName || !lastName || !address || !phoneNumber) {

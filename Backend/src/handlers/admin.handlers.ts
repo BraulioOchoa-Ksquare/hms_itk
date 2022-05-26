@@ -1,7 +1,8 @@
 import * as admin from "firebase-admin";
+import { Appointment } from "../models/Appointment.models";
 import { Role } from "../roles";
 
-export const createUser = async (displayName: string, email: string, password: string, role: Role) => {
+export const createUserDoctor = async (displayName: string, email: string, password: string, role: Role) => {
   const { uid } = await admin.auth().createUser({
     displayName: displayName,
     email: email,
@@ -26,8 +27,25 @@ export const createUser = async (displayName: string, email: string, password: s
       isInactive: user.disabled,
     };
   };
-  
+
   export const disableUser = async (uid: string, disabled: boolean) => {
     const user = await admin.auth().updateUser(uid, { disabled });
     return mapToUser(user);
   };
+
+  export const appointmentListAll = async (
+    limit?: number,
+    offset?: number
+  ) =>{
+    try {
+      const appointmentsListed = await Appointment.findAll(
+        {order: ["id"], limit: limit, offset: offset}
+      );
+      console.log("Appontment list");
+      return appointmentsListed;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+

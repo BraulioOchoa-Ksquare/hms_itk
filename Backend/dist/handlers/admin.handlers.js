@@ -31,47 +31,45 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const index_1 = require("./models/index");
-const dotenv_1 = __importDefault(require("dotenv"));
+exports.appointmentListAll = exports.disableUser = exports.createUserDoctor = void 0;
 const admin = __importStar(require("firebase-admin"));
-const user_routes_1 = require("./routes/user.routes");
-const profile_routes_1 = require("./routes/profile.routes");
-const patient_routes_1 = require("./routes/patient.routes");
-const doctor_routes_1 = require("./routes/doctor.routes");
-const appointment_routes_1 = require("./routes/appointment.routes");
-const admin_routes_1 = require("./routes/admin.routes");
-dotenv_1.default.config();
-admin.initializeApp();
-const app = (0, express_1.default)();
-const port = process.env.PORT || 3000;
-const db_name = process.env.DB_NAME;
-const db_username = process.env.DB_USERNAME;
-const db_password = process.env.DB_PASSWORD;
-const db_host = process.env.DB_HOSTNAME;
-// Middlewares //
-app.use(express_1.default.json());
-// Routes //
-app.use("/user", user_routes_1.UserRoute);
-app.use("/profile", profile_routes_1.ProfileRoute);
-app.use("/patient", patient_routes_1.PatientRoute);
-app.use("/doctor", doctor_routes_1.DoctorRoute);
-app.use("/appointment", appointment_routes_1.AppointmentRoute);
-app.use("/admin", admin_routes_1.AdminRoute);
-app.get("/", (req, res) => {
-    res.send(req.originalUrl);
+const Appointment_models_1 = require("../models/Appointment.models");
+const createUserDoctor = (displayName, email, password, role) => __awaiter(void 0, void 0, void 0, function* () {
+    const { uid } = yield admin.auth().createUser({
+        displayName: displayName,
+        email: email,
+        password: password
+    });
+    yield admin.auth().setCustomUserClaims(uid, {
+        role
+    });
+    return uid;
 });
-app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
+exports.createUserDoctor = createUserDoctor;
+const mapToUser = (user) => {
+    const customClaims = (user.customClaims || { role: "" });
+    const role = customClaims.role ? customClaims.role : "";
+    return {
+        uid: user.uid,
+        email: user.email,
+        role,
+        isInactive: user.disabled,
+    };
+};
+const disableUser = (uid, disabled) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield admin.auth().updateUser(uid, { disabled });
+    return mapToUser(user);
+});
+exports.disableUser = disableUser;
+const appointmentListAll = (limit, offset) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        (0, index_1.startSequelize)(db_name, db_password, db_host, db_username);
-        console.log("Up and running!!!");
+        const appointmentsListed = yield Appointment_models_1.Appointment.findAll({ order: ["id"], limit: limit, offset: offset });
+        console.log("Appontment list");
+        return appointmentsListed;
     }
     catch (error) {
-        console.error(error);
-        process.abort();
+        console.log(error);
     }
-}));
+});
+exports.appointmentListAll = appointmentListAll;

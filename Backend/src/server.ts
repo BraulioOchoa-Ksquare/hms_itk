@@ -1,12 +1,13 @@
 import express, { Request, Response } from "express";
 import { startSequelize } from "./models/index";
 import dotenv from "dotenv";
-import { createUserRoute } from "./routes/user.routes";
 import * as admin from "firebase-admin";
-import { createProfileRoute } from "./routes/profile.routes";
-import { createPatientRoute } from "./routes/patient.routes";
-import { createDoctorRoute } from "./routes/doctor.routes";
-import { createAppointmentRoute } from "./routes/appointment.routes";
+import { UserRoute } from "./routes/user.routes";
+import { ProfileRoute } from "./routes/profile.routes";
+import { PatientRoute } from "./routes/patient.routes";
+import { DoctorRoute } from "./routes/doctor.routes";
+import { AppointmentRoute } from "./routes/appointment.routes";
+import { AdminRoute } from "./routes/admin.routes";
 
 dotenv.config();
 admin.initializeApp();
@@ -24,11 +25,12 @@ const db_host = <string>process.env.DB_HOSTNAME;
 app.use(express.json());
 
 // Routes //
-app.use("/user", createUserRoute);
-app.use("/profile", createProfileRoute);
-app.use("/patient", createPatientRoute);
-app.use("/doctor", createDoctorRoute);
-app.use("/appointment", createAppointmentRoute);
+app.use("/user", UserRoute);
+app.use("/profile", ProfileRoute);
+app.use("/patient", PatientRoute);
+app.use("/doctor", DoctorRoute);
+app.use("/appointment", AppointmentRoute);
+app.use("/admin", AdminRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send(req.originalUrl);

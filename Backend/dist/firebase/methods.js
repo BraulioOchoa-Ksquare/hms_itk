@@ -53,7 +53,7 @@ const mapToUser = (user) => {
         uid: user.uid,
         email: user.email,
         role,
-        isActive: user.disabled,
+        isInactive: user.disabled,
     };
 };
 const disableUser = (uid, disabled) => __awaiter(void 0, void 0, void 0, function* () {
