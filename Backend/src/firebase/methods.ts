@@ -23,7 +23,7 @@ export const createUser = async (displayName: string, email: string, password: s
       uid: user.uid,
       email: user.email,
       role,
-      isActive: user.disabled,
+      isInactive: user.disabled,
     };
   };
   

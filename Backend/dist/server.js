@@ -38,12 +38,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const index_1 = require("./models/index");
 const dotenv_1 = __importDefault(require("dotenv"));
-const user_routes_1 = require("./routes/user.routes");
 const admin = __importStar(require("firebase-admin"));
+const user_routes_1 = require("./routes/user.routes");
 const profile_routes_1 = require("./routes/profile.routes");
 const patient_routes_1 = require("./routes/patient.routes");
 const doctor_routes_1 = require("./routes/doctor.routes");
 const appointment_routes_1 = require("./routes/appointment.routes");
+const admin_routes_1 = require("./routes/admin.routes");
 dotenv_1.default.config();
 admin.initializeApp();
 const app = (0, express_1.default)();
@@ -55,11 +56,12 @@ const db_host = process.env.DB_HOSTNAME;
 // Middlewares //
 app.use(express_1.default.json());
 // Routes //
-app.use("/user", user_routes_1.createUserRoute);
-app.use("/profile", profile_routes_1.createProfileRoute);
-app.use("/patient", patient_routes_1.createPatientRoute);
-app.use("/doctor", doctor_routes_1.createDoctorRoute);
-app.use("/appointment", appointment_routes_1.createAppointmentRoute);
+app.use("/user", user_routes_1.UserRoute);
+app.use("/profile", profile_routes_1.ProfileRoute);
+app.use("/patient", patient_routes_1.PatientRoute);
+app.use("/doctor", doctor_routes_1.DoctorRoute);
+app.use("/appointment", appointment_routes_1.AppointmentRoute);
+app.use("/admin", admin_routes_1.AdminRoute);
 app.get("/", (req, res) => {
     res.send(req.originalUrl);
 });

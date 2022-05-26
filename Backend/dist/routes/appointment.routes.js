@@ -9,25 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createAppointmentRoute = void 0;
+exports.AppointmentRoute = void 0;
 //Esta ruta usa la logica de handlers
 const express_1 = require("express");
 const appointment_handlers_1 = require("../handlers/appointment.handlers");
 const hasRole_1 = require("../middlewares/hasRole");
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
-exports.createAppointmentRoute = (0, express_1.Router)();
-exports.createAppointmentRoute.post('/createAppointment', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
-    roles: ["admin"],
+exports.AppointmentRoute = (0, express_1.Router)();
+//========================= PATIENTS ==================================
+exports.AppointmentRoute.post('/createAppointment', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: [""],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { date, hour, DoctorId, PatientId, status } = req.body;
-    if (!date || !hour || !DoctorId || !PatientId || !status) {
+    const { date, hour, DoctorId, PatientId } = req.body;
+    if (!date || !hour || !DoctorId || !PatientId) {
         res.status(400);
         return res.send({ error: "All fields are required" });
     }
     try {
-        const appointmentCreated = yield (0, appointment_handlers_1.createAppointment)(date, hour, DoctorId, PatientId, status);
+        const appointmentCreated = yield (0, appointment_handlers_1.createAppointment)(date, hour, DoctorId, PatientId, true);
         res.statusCode = 201;
         res.send({ appointmentCreated });
     }
@@ -35,3 +36,83 @@ exports.createAppointmentRoute.post('/createAppointment', isAuthenticated_1.isAu
         res.status(500).send(error);
     }
 }));
+exports.AppointmentRoute.get('/appointmentListPatient/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: true,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const appointmentList = yield (0, appointment_handlers_1.appointmentListPatient)(+id);
+        res.statusCode = 201;
+        res.send({ appointmentList });
+    }
+    catch (error) {
+        res.status(500).send(error);
+    }
+}));
+exports.AppointmentRoute.get('/appointmentReadPatient/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: true,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const appointmentRead = yield (0, appointment_handlers_1.appointmentReadPatient)(+id);
+        res.statusCode = 201;
+        res.send({ appointmentRead });
+    }
+    catch (error) {
+        res.status(500).send(error);
+    }
+}));
+exports.AppointmentRoute.patch('/appointmentDisabledPatient/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: true,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const status = false;
+    try {
+        yield (0, appointment_handlers_1.appointmentDisabledPatient)(+id, status);
+        res.statusCode = 201;
+        res.send(`The appointment with the id: ${id} has been cancelled.`);
+    }
+    catch (error) {
+        res.status(500).send(error);
+    }
+}));
+//========================= END PATIENTS ==================================
+//========================= DOCTOR ==================================
+exports.AppointmentRoute.get('/appointmentListDoctor/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: true,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const appointmentList = yield (0, appointment_handlers_1.appointmentListDoctor)(+id);
+        res.statusCode = 201;
+        res.send({ appointmentList });
+    }
+    catch (error) {
+        res.status(500).send(error);
+    }
+}));
+exports.AppointmentRoute.patch('/updateDateHourApp/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: true,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { date, hour } = req.body;
+    try {
+        yield (0, appointment_handlers_1.updateDateHourApp)(+id, date, hour);
+        res.statusCode = 201;
+        res.send(`The appointment with the id: ${id} has been updated.`);
+    }
+    catch (error) {
+        res.status(500).send(error);
+    }
+}));
+//========================= END DOCTOR ==================================

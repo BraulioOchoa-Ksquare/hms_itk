@@ -4,9 +4,9 @@ import { createDoctor } from "../handlers/doctor.handlers";
 import { hasRole } from "../middlewares/hasRole";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 
-export const createDoctorRoute = Router();
+export const DoctorRoute = Router();
 
-createDoctorRoute.post(
+DoctorRoute.post(
   '/createDoctor',
   isAuthenticated,
   hasRole({

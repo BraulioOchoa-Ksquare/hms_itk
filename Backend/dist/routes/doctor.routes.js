@@ -9,14 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createDoctorRoute = void 0;
+exports.DoctorRoute = void 0;
 //Esta ruta usa la logica de handlers
 const express_1 = require("express");
 const doctor_handlers_1 = require("../handlers/doctor.handlers");
 const hasRole_1 = require("../middlewares/hasRole");
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
-exports.createDoctorRoute = (0, express_1.Router)();
-exports.createDoctorRoute.post('/createDoctor', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.DoctorRoute = (0, express_1.Router)();
+exports.DoctorRoute.post('/createDoctor', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
