@@ -6,6 +6,35 @@ import { isAuthenticated } from "../middlewares/isAuthenticated";
 import { Appointment } from "../models/Appointment.models";
 export const AdminRoute = Router();
 
+
+AdminRoute.post('/createAdmin',
+isAuthenticated,
+hasRole({
+  roles: [""],
+  allowSameUser: false,
+}),
+async (req: Request, res: Response) => {
+  const {displayName, email, password, role} = req.body;
+
+  if (!displayName || !email || !password || !role) {
+    res.status(400);
+    return res.send({ error: "All fields are required" });
+  }
+  
+  if (role !== "admin") {
+    res.status(400);
+    return res.send({ error: "Invalid role" });
+  }
+
+  try {
+     const userCreated = await createUser(displayName, email, password, role);
+     res.statusCode = 201;
+     res.send({userCreated});
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 AdminRoute.post('/createUserDoctor', async (req: Request, res: Response) => {
   const {displayName, email, password, role} = req.body;
 
@@ -47,7 +76,7 @@ AdminRoute.patch(
   });
 
   AdminRoute.get(
-    '/appointmentListAll',
+    '/appointmentListAll/',
     isAuthenticated,
     hasRole({
       roles: ["admin"],

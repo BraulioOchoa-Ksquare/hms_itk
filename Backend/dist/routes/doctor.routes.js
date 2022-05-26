@@ -15,6 +15,7 @@ const express_1 = require("express");
 const doctor_handlers_1 = require("../handlers/doctor.handlers");
 const hasRole_1 = require("../middlewares/hasRole");
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
+const Appointment_models_1 = require("../models/Appointment.models");
 exports.DoctorRoute = (0, express_1.Router)();
 exports.DoctorRoute.post('/createDoctor', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
@@ -33,5 +34,31 @@ exports.DoctorRoute.post('/createDoctor', isAuthenticated_1.isAuthenticated, (0,
     }
     catch (error) {
         res.status(500).send(error);
+    }
+}));
+exports.DoctorRoute.get('/searchDoctorApp/:order?', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: true,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { date, PatientId, } = JSON.parse(req.query.where || "{}");
+        const where = { date, PatientId };
+        Object.keys(where).forEach((key) => {
+            where[key] === undefined ? delete where[key] : {};
+        });
+        let { order } = req.params;
+        if (order !== "ASC" && order !== "DESC") {
+            order = "ASC";
+        }
+        const searchDoctorApp = yield Appointment_models_1.Appointment.findAll({
+            where,
+            order: [["id", order]]
+        });
+        res.statusCode = 201;
+        res.send({ searchDoctorApp });
+    }
+    catch (error) {
+        console.log(error);
     }
 }));
