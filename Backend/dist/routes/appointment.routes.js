@@ -17,9 +17,9 @@ const hasRole_1 = require("../middlewares/hasRole");
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
 exports.AppointmentRoute = (0, express_1.Router)();
 //========================= PATIENTS ==================================
-exports.AppointmentRoute.post('/createAppointment', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
-    roles: [""],
-    allowSameUser: true,
+exports.AppointmentRoute.post('/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["patient"],
+    allowSameUser: false,
 }), // Solamente el SU pueda acceder
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { date, hour, DoctorId, PatientId } = req.body;
@@ -33,10 +33,10 @@ exports.AppointmentRoute.post('/createAppointment', isAuthenticated_1.isAuthenti
         res.send({ appointmentCreated });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
-exports.AppointmentRoute.get('/appointmentListPatient/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.AppointmentRoute.get('/list/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -49,10 +49,10 @@ exports.AppointmentRoute.get('/appointmentListPatient/:id', isAuthenticated_1.is
         res.send({ appointmentList });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
-exports.AppointmentRoute.get('/appointmentReadPatient/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.AppointmentRoute.get('/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -64,10 +64,10 @@ exports.AppointmentRoute.get('/appointmentReadPatient/:id', isAuthenticated_1.is
         res.send({ appointmentRead });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
-exports.AppointmentRoute.patch('/appointmentDisabledPatient/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.AppointmentRoute.patch('/cancel/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -80,12 +80,12 @@ exports.AppointmentRoute.patch('/appointmentDisabledPatient/:id', isAuthenticate
         res.send(`The appointment with the id: ${id} has been cancelled.`);
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
 //========================= END PATIENTS ==================================
 //========================= DOCTOR ==================================
-exports.AppointmentRoute.get('/appointmentListDoctor/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.AppointmentRoute.get('/list/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -98,10 +98,10 @@ exports.AppointmentRoute.get('/appointmentListDoctor/:id', isAuthenticated_1.isA
         res.send({ appointmentList });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
-exports.AppointmentRoute.patch('/updateDateHourApp/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.AppointmentRoute.patch('/update/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -114,7 +114,7 @@ exports.AppointmentRoute.patch('/updateDateHourApp/:id', isAuthenticated_1.isAut
         res.send(`The appointment with the id: ${id} has been updated.`);
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
 //========================= END DOCTOR ==================================

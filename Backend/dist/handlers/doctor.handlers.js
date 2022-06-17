@@ -9,17 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createDoctor = void 0;
+exports.profileDoctor = void 0;
 //logica
 const Doctor_model_1 = require("../models/Doctor.model");
-const createDoctor = (professionalLicense, speciality, ProfileId) => __awaiter(void 0, void 0, void 0, function* () {
+const profileDoctor = (professionalLicense, speciality, ProfileId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const profileDoctor = yield Doctor_model_1.Doctor.create({ professionalLicense, speciality, ProfileId });
-        console.log("Doctor created successfully");
         return profileDoctor;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 });
-exports.createDoctor = createDoctor;
+exports.profileDoctor = profileDoctor;

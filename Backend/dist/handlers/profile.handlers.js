@@ -9,17 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProfile = void 0;
+exports.profilePerId = exports.createProfile = void 0;
 //logica 
 const Profile_model_1 = require("../models/Profile.model");
 const createProfile = (uid, id, firstName, lastName, address, phoneNumber) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const profileCreated = yield Profile_model_1.Profile.create({ uid, id, firstName, lastName, address, phoneNumber });
-        console.log("Profile created successfully");
         return profileCreated;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 exports.createProfile = createProfile;
+const profilePerId = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const profileId = yield Profile_model_1.Profile.findByPk(id);
+        return profileId;
+    }
+    catch (error) {
+        throw error;
+    }
+});
+exports.profilePerId = profilePerId;

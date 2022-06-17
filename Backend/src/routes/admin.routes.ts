@@ -7,7 +7,7 @@ import { Appointment } from "../models/Appointment.models";
 export const AdminRoute = Router();
 
 
-AdminRoute.post('/createAdmin',
+AdminRoute.post('/',
 isAuthenticated,
 hasRole({
   roles: [""],
@@ -31,29 +31,29 @@ async (req: Request, res: Response) => {
      res.statusCode = 201;
      res.send({userCreated});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error:"something went wrong"});
   }
 });
 
-AdminRoute.post('/createUserDoctor', async (req: Request, res: Response) => {
-  const {displayName, email, password, role} = req.body;
+AdminRoute.post('/userDoctor',
+  isAuthenticated,
+  hasRole({
+    roles: ["admin"],
+    allowSameUser: false,
+  }), async (req: Request, res: Response) => {
+  const {displayName, email, password} = req.body;
 
-  if (!displayName || !email || !password || !role) {
+  if (!displayName || !email || !password) {
     res.status(400);
     return res.send({ error: "All fields are required" });
   }
-  
-  if (role !== "doctor") {
-    res.status(400);
-    return res.send({ error: "Invalid role" });
-  }
 
   try {
-     const userDoctorCreated = await createUser(displayName, email, password, role);
+     const userDoctorCreated = await createUser(displayName, email, password, "doctor");
      res.statusCode = 201;
      res.send({userDoctorCreated});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error:"something went wrong"});
   }
 })
 
@@ -71,12 +71,12 @@ AdminRoute.patch(
        res.statusCode = 201;
        res.send({userActivated});
     } catch (error) {
-      res.status(500).send(error);
+      res.status(500).send({error:"something went wrong"});
     }
   });
 
   AdminRoute.get(
-    '/appointmentListAll/',
+    '/appointmentList/',
     isAuthenticated,
     hasRole({
       roles: ["admin"],
@@ -89,13 +89,13 @@ AdminRoute.patch(
          res.statusCode = 201;
          res.send({appointmentsListed});
       } catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({error:"something went wrong"});
       }
     });
 
     //Filter by PatientId, DoctorId, status and order by ASC and DESC
     AdminRoute.get(
-      '/searchAdminApp/:order?',
+      '/search/',
       isAuthenticated,
       hasRole({
         roles: ["admin"],
@@ -109,17 +109,20 @@ AdminRoute.patch(
             where[key] === undefined ? delete where[key] : {}
           });
 
-          let {order} = req.params;
-          if(order !== "ASC" && order !== "DESC"){
-            order = "ASC";
+          const order = req.query
+          let orderString: string = "ASC";
+          orderString = String(order.order);
+            orderString = orderString.slice(1,-1);
+          if(orderString !== "DESC"){
+            orderString = "ASC"
           }
           const searchAdminApp = await Appointment.findAll({
             where,
-            order: [["id", order]]
+            order: [["id", orderString]]
           });
           res.statusCode = 201;
           res.send({searchAdminApp});
       } catch (error) {
-      console.log(error);
+        res.status(500).send({error:"something went wrong"});
       }
     });

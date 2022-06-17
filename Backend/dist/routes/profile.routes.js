@@ -13,8 +13,10 @@ exports.ProfileRoute = void 0;
 //Esta ruta usa la logica de handlers
 const express_1 = require("express");
 const profile_handlers_1 = require("../handlers/profile.handlers");
+const hasRole_1 = require("../middlewares/hasRole");
+const isAuthenticated_1 = require("../middlewares/isAuthenticated");
 exports.ProfileRoute = (0, express_1.Router)();
-exports.ProfileRoute.post('/createProfile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.ProfileRoute.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid, id, firstName, lastName, address, phoneNumber } = req.body;
     if (!uid || !firstName || !lastName || !address || !phoneNumber) {
         res.status(400);
@@ -26,6 +28,21 @@ exports.ProfileRoute.post('/createProfile', (req, res) => __awaiter(void 0, void
         res.send({ profileCreated });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
+    }
+}));
+exports.ProfileRoute.get('/:id', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: false,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const profileId = yield (0, profile_handlers_1.profilePerId)(+id);
+        res.statusCode = 201;
+        res.send({ profileId });
+    }
+    catch (error) {
+        res.status(500).send({ error: "something went wrong" });
     }
 }));

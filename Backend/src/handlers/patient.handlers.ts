@@ -1,16 +1,15 @@
 //logica
 import { Patient } from "../models/Patient.model";
 
-export const createPatient = async (
+export const patientProfile = async (
   gender: string,
   birthDate: Date,
   age: number,
   ProfileId: number) =>{
     try {
-      const profilePatient = await Patient.create({gender, birthDate, age, ProfileId});
-      console.log("Patient created successfully");
-      return profilePatient;
+      const patientProfile = await Patient.create({gender, birthDate, age, ProfileId});
+      return patientProfile;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   };

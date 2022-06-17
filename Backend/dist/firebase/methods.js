@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.disableUser = exports.createUser = void 0;
+exports.disableUser = exports.getAllUsers = exports.deleteUser = exports.userUid = exports.createUser = void 0;
 const admin = __importStar(require("firebase-admin"));
 const createUser = (displayName, email, password, role) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid } = yield admin.auth().createUser({
@@ -56,6 +56,27 @@ const mapToUser = (user) => {
         isInactive: user.disabled,
     };
 };
+const userUid = (uid) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield admin.auth().getUser(uid);
+    return mapToUser(user);
+});
+exports.userUid = userUid;
+const deleteUser = (uid) => __awaiter(void 0, void 0, void 0, function* () {
+    yield admin.auth().deleteUser(uid);
+});
+exports.deleteUser = deleteUser;
+// export const usersList = async () => {
+//   console.log("test")
+//   const listAllMyUsers = await.auth().listUsers(100);
+//   const user = await admin.auth().listUsers(100);
+//   return mapToUser(user);
+// };
+const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
+    const listAllMyUsers = yield admin.auth().listUsers(100);
+    const users = listAllMyUsers.users.map(mapToUser);
+    return users;
+});
+exports.getAllUsers = getAllUsers;
 const disableUser = (uid, disabled) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield admin.auth().updateUser(uid, { disabled });
     return mapToUser(user);
