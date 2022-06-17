@@ -1,13 +1,13 @@
 //Esta ruta usa la logica de handlers
 import { Router, Request, Response } from "express";
-import { createPatient } from "../handlers/patient.handlers";
+import { patientProfile } from "../handlers/patient.handlers";
 import { hasRole } from "../middlewares/hasRole";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 export const PatientRoute = Router();
 
 PatientRoute.post(
-  '/createPatient',
+  '/profile',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -22,11 +22,11 @@ PatientRoute.post(
   }
 
   try {
-    const patientCreated = await createPatient(gender, birthDate, age, ProfileId);
+    const profileCreated = await patientProfile(gender, birthDate, age, ProfileId);
      res.statusCode = 201;
-     res.send({patientCreated});
+     res.send({profileCreated});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error:"something went wrong"});
   }
 });
 

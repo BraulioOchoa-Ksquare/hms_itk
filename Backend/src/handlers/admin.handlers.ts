@@ -41,10 +41,9 @@ export const createUserDoctor = async (displayName: string, email: string, passw
       const appointmentsListed = await Appointment.findAll(
         {order: ["id"], limit: limit, offset: offset}
       );
-      console.log("Appontment list");
       return appointmentsListed;
     } catch (error) {
-      console.log(error);
+     throw error;
     }
   };
 

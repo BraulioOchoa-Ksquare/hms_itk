@@ -65,11 +65,10 @@ exports.disableUser = disableUser;
 const appointmentListAll = (limit, offset) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const appointmentsListed = yield Appointment_models_1.Appointment.findAll({ order: ["id"], limit: limit, offset: offset });
-        console.log("Appontment list");
         return appointmentsListed;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 exports.appointmentListAll = appointmentListAll;

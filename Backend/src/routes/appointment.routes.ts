@@ -8,11 +8,11 @@ export const AppointmentRoute = Router();
 
 //========================= PATIENTS ==================================
 AppointmentRoute.post(
-  '/createAppointment',
+  '/',
   isAuthenticated,
   hasRole({
-    roles: [""],
-    allowSameUser: true,
+    roles: ["patient"],
+    allowSameUser: false,
   }), // Solamente el SU pueda acceder
   async (req: Request, res: Response) => {
   const {date, hour, DoctorId, PatientId} = req.body;
@@ -27,12 +27,12 @@ AppointmentRoute.post(
      res.statusCode = 201;
      res.send({appointmentCreated});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error:"something went wrong"});
   }
 });
 
 AppointmentRoute.get(
-  '/appointmentListPatient/:id',
+  '/list/:id',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -40,18 +40,18 @@ AppointmentRoute.get(
   }), // Solamente el SU pueda acceder
   async (req: Request, res: Response) => {
   const {id} = req.params;
-  const { limit, offset} = req.query
+  const {limit, offset} = req.query
   try {
     const appointmentList = await appointmentListPatient(+id, limit? +limit: 10, offset? +offset: 0);
      res.statusCode = 201;
      res.send({appointmentList});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error:"something went wrong"});
   }
 });
 
 AppointmentRoute.get(
-  '/appointmentReadPatient/:id',
+  '/:id',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -65,12 +65,12 @@ AppointmentRoute.get(
      res.statusCode = 201;
      res.send({appointmentRead});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error:"something went wrong"});
   }
 });
 
 AppointmentRoute.patch(
-  '/appointmentDisabledPatient/:id',
+  '/cancel/:id',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -84,14 +84,14 @@ AppointmentRoute.patch(
      res.statusCode = 201;
      res.send(`The appointment with the id: ${id} has been cancelled.`);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error:"something went wrong"});
   }
 });
 //========================= END PATIENTS ==================================
 
 //========================= DOCTOR ==================================
 AppointmentRoute.get(
-  '/appointmentListDoctor/:id',
+  '/list/:id',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -101,16 +101,16 @@ AppointmentRoute.get(
   const {id} = req.params;
   const { limit, offset} = req.query
   try {
-    const appointmentList = await appointmentListDoctor(+id, limit? +limit: 10, offset? +offset: 0);
+    const appointmentList = await appointmentListDoctor(+id, limit ? +limit: 10, offset ? +offset: 0);
      res.statusCode = 201;
      res.send({appointmentList});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error:"something went wrong"});
   }
 });
 
 AppointmentRoute.patch(
-  '/updateDateHourApp/:id',
+  '/update/:id',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -124,7 +124,7 @@ AppointmentRoute.patch(
      res.statusCode = 201;
      res.send(`The appointment with the id: ${id} has been updated.`);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error:"something went wrong"});
   }
 });
 

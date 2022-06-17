@@ -17,7 +17,7 @@ const hasRole_1 = require("../middlewares/hasRole");
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
 const Appointment_models_1 = require("../models/Appointment.models");
 exports.DoctorRoute = (0, express_1.Router)();
-exports.DoctorRoute.post('/createDoctor', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.DoctorRoute.post('/profile', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -28,37 +28,41 @@ exports.DoctorRoute.post('/createDoctor', isAuthenticated_1.isAuthenticated, (0,
         return res.send({ error: "All fields are required" });
     }
     try {
-        const doctorCreated = yield (0, doctor_handlers_1.createDoctor)(professionalLicense, speciality, ProfileId);
+        const profileCreated = yield (0, doctor_handlers_1.profileDoctor)(professionalLicense, speciality, ProfileId);
         res.statusCode = 201;
-        res.send({ doctorCreated });
+        res.send({ profileCreated });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
-exports.DoctorRoute.get('/searchDoctorApp/:order?', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.DoctorRoute.get('/search/:DoctorId', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { date, PatientId, } = JSON.parse(req.query.where || "{}");
-        const where = { date, PatientId };
+        const { DoctorId } = req.params;
+        const { date, PatientId } = JSON.parse(req.query.where || "{}");
+        const where = { date, PatientId, DoctorId };
         Object.keys(where).forEach((key) => {
             where[key] === undefined ? delete where[key] : {};
         });
-        let { order } = req.params;
-        if (order !== "ASC" && order !== "DESC") {
-            order = "ASC";
+        const order = req.query;
+        let orderString = "ASC";
+        orderString = String(order.order);
+        orderString = orderString.slice(1, -1);
+        if (orderString !== "DESC") {
+            orderString = "ASC";
         }
         const searchDoctorApp = yield Appointment_models_1.Appointment.findAll({
             where,
-            order: [["id", order]]
+            order: [["id", orderString]]
         });
         res.statusCode = 201;
         res.send({ searchDoctorApp });
     }
     catch (error) {
-        console.log(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));

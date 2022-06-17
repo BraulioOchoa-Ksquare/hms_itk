@@ -16,7 +16,7 @@ const patient_handlers_1 = require("../handlers/patient.handlers");
 const hasRole_1 = require("../middlewares/hasRole");
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
 exports.PatientRoute = (0, express_1.Router)();
-exports.PatientRoute.post('/createPatient', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.PatientRoute.post('/profile', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -27,11 +27,11 @@ exports.PatientRoute.post('/createPatient', isAuthenticated_1.isAuthenticated, (
         return res.send({ error: "All fields are required" });
     }
     try {
-        const patientCreated = yield (0, patient_handlers_1.createPatient)(gender, birthDate, age, ProfileId);
+        const profileCreated = yield (0, patient_handlers_1.patientProfile)(gender, birthDate, age, ProfileId);
         res.statusCode = 201;
-        res.send({ patientCreated });
+        res.send({ profileCreated });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));

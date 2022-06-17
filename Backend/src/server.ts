@@ -8,12 +8,12 @@ import { PatientRoute } from "./routes/patient.routes";
 import { DoctorRoute } from "./routes/doctor.routes";
 import { AppointmentRoute } from "./routes/appointment.routes";
 import { AdminRoute } from "./routes/admin.routes";
+import cors from "cors";
 
 dotenv.config();
 admin.initializeApp();
 
 const app = express();
-
 const port = process.env.PORT || 3000;
 const db_name = <string>process.env.DB_NAME;
 const db_username = <string>process.env.DB_USERNAME;
@@ -21,7 +21,7 @@ const db_password = <string>process.env.DB_PASSWORD;
 const db_host = <string>process.env.DB_HOSTNAME;
 
 // Middlewares //
-
+app.use(cors());
 app.use(express.json());
 
 // Routes //
@@ -35,7 +35,6 @@ app.use("/admin", AdminRoute);
 app.get("/", (req: Request, res: Response) => {
   res.send(req.originalUrl);
 });
-
 
 app.listen(port, async () => {
   try {

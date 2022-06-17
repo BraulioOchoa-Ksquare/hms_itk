@@ -15,45 +15,51 @@ const Appointment_models_1 = require("../models/Appointment.models");
 //========================= PATIENTS ==================================
 const createAppointment = (date, hour, DoctorId, PatientId, status) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const appointmentCreated = yield Appointment_models_1.Appointment.create({ date, hour, DoctorId, PatientId, status });
-        console.log("Appointment created successfully");
+        const appointmentCreated = yield Appointment_models_1.Appointment.create({
+            date,
+            hour,
+            DoctorId,
+            PatientId,
+            status,
+        });
         return appointmentCreated;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 exports.createAppointment = createAppointment;
 const appointmentListPatient = (id, limit, offset) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const appointmentList = yield Appointment_models_1.Appointment.findAll({ where: { PatientId: id }, limit: limit, offset: offset });
-        console.log("Appontment list");
+        const appointmentList = yield Appointment_models_1.Appointment.findAll({
+            where: { PatientId: id },
+            limit: limit,
+            offset: offset,
+        });
         return appointmentList;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 exports.appointmentListPatient = appointmentListPatient;
 const appointmentReadPatient = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const appointmentRead = yield Appointment_models_1.Appointment.findByPk(id);
-        console.log("Appontment created successfully");
         return appointmentRead;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 exports.appointmentReadPatient = appointmentReadPatient;
 const appointmentDisabledPatient = (id, status) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const appointmentDisabled = yield Appointment_models_1.Appointment.update({ status: status }, { where: { id: id } });
-        console.log("Appontment was disables correctly");
         return appointmentDisabled;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 exports.appointmentDisabledPatient = appointmentDisabledPatient;
@@ -61,12 +67,15 @@ exports.appointmentDisabledPatient = appointmentDisabledPatient;
 //============================ DOCTORS ==================================
 const appointmentListDoctor = (id, limit, offset) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const appointmentList = yield Appointment_models_1.Appointment.findAll({ where: { DoctorId: id }, limit: limit, offset: offset });
-        console.log("Appointment list");
+        const appointmentList = yield Appointment_models_1.Appointment.findAll({
+            where: { DoctorId: id },
+            limit: limit,
+            offset: offset,
+        });
         return appointmentList;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 exports.appointmentListDoctor = appointmentListDoctor;
@@ -77,7 +86,7 @@ const updateDateHourApp = (id, date, hour) => __awaiter(void 0, void 0, void 0, 
         return appointmentUpdated;
     }
     catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 exports.updateDateHourApp = updateDateHourApp;

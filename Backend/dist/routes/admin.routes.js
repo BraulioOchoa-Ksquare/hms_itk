@@ -17,7 +17,7 @@ const hasRole_1 = require("../middlewares/hasRole");
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
 const Appointment_models_1 = require("../models/Appointment.models");
 exports.AdminRoute = (0, express_1.Router)();
-exports.AdminRoute.post('/createAdmin', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.AdminRoute.post('/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: [""],
     allowSameUser: false,
 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -36,26 +36,25 @@ exports.AdminRoute.post('/createAdmin', isAuthenticated_1.isAuthenticated, (0, h
         res.send({ userCreated });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
-exports.AdminRoute.post('/createUserDoctor', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { displayName, email, password, role } = req.body;
-    if (!displayName || !email || !password || !role) {
+exports.AdminRoute.post('/userDoctor', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: false,
+}), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { displayName, email, password } = req.body;
+    if (!displayName || !email || !password) {
         res.status(400);
         return res.send({ error: "All fields are required" });
     }
-    if (role !== "doctor") {
-        res.status(400);
-        return res.send({ error: "Invalid role" });
-    }
     try {
-        const userDoctorCreated = yield (0, methods_1.createUser)(displayName, email, password, role);
+        const userDoctorCreated = yield (0, methods_1.createUser)(displayName, email, password, "doctor");
         res.statusCode = 201;
         res.send({ userDoctorCreated });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
 exports.AdminRoute.patch('/activateUser/:uid', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
@@ -70,10 +69,10 @@ exports.AdminRoute.patch('/activateUser/:uid', isAuthenticated_1.isAuthenticated
         res.send({ userActivated });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
-exports.AdminRoute.get('/appointmentListAll/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.AdminRoute.get('/appointmentList/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -85,11 +84,11 @@ exports.AdminRoute.get('/appointmentListAll/', isAuthenticated_1.isAuthenticated
         res.send({ appointmentsListed });
     }
     catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));
 //Filter by PatientId, DoctorId, status and order by ASC and DESC
-exports.AdminRoute.get('/searchAdminApp/:order?', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.AdminRoute.get('/search/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: false,
 }), // Solamente el SU pueda acceder
@@ -100,18 +99,21 @@ exports.AdminRoute.get('/searchAdminApp/:order?', isAuthenticated_1.isAuthentica
         Object.keys(where).forEach((key) => {
             where[key] === undefined ? delete where[key] : {};
         });
-        let { order } = req.params;
-        if (order !== "ASC" && order !== "DESC") {
-            order = "ASC";
+        const order = req.query;
+        let orderString = "ASC";
+        orderString = String(order.order);
+        orderString = orderString.slice(1, -1);
+        if (orderString !== "DESC") {
+            orderString = "ASC";
         }
         const searchAdminApp = yield Appointment_models_1.Appointment.findAll({
             where,
-            order: [["id", order]]
+            order: [["id", orderString]]
         });
         res.statusCode = 201;
         res.send({ searchAdminApp });
     }
     catch (error) {
-        console.log(error);
+        res.status(500).send({ error: "something went wrong" });
     }
 }));

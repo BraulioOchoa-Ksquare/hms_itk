@@ -10,9 +10,17 @@ export const createProfile = async (
   phoneNumber:string) =>{
     try {
       const profileCreated = await Profile.create({uid, id, firstName, lastName, address, phoneNumber});
-      console.log("Profile created successfully");
       return profileCreated;
     } catch (error) {
-      console.log(error);
+      throw error;
+    }
+  };
+
+  export const profilePerId = async (id: number) => {
+    try {
+      const profileId = await Profile.findByPk(id);
+      return profileId;
+    } catch (error) {
+      throw error;
     }
   };
