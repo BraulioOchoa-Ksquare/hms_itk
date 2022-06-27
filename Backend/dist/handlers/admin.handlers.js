@@ -32,9 +32,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.appointmentListAll = exports.disableUser = exports.createUserDoctor = void 0;
+exports.appointmentListAll = exports.getListDoctors = exports.getListPatients = exports.disableUser = exports.createUserDoctor = void 0;
 const admin = __importStar(require("firebase-admin"));
 const Appointment_models_1 = require("../models/Appointment.models");
+const Doctor_model_1 = require("../models/Doctor.model");
+const Patient_model_1 = require("../models/Patient.model");
+const Profile_model_1 = require("../models/Profile.model");
 const createUserDoctor = (displayName, email, password, role) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid } = yield admin.auth().createUser({
         displayName: displayName,
@@ -62,6 +65,36 @@ const disableUser = (uid, disabled) => __awaiter(void 0, void 0, void 0, functio
     return mapToUser(user);
 });
 exports.disableUser = disableUser;
+const getListPatients = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const getListPatients = yield Patient_model_1.Patient.findAll({
+            include: [{
+                    model: Profile_model_1.Profile,
+                    required: true
+                }]
+        });
+        return getListPatients;
+    }
+    catch (error) {
+        throw error;
+    }
+});
+exports.getListPatients = getListPatients;
+const getListDoctors = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const getListDoctors = yield Doctor_model_1.Doctor.findAll({
+            include: [{
+                    model: Profile_model_1.Profile,
+                    required: true
+                }]
+        });
+        return getListDoctors;
+    }
+    catch (error) {
+        throw error;
+    }
+});
+exports.getListDoctors = getListDoctors;
 const appointmentListAll = (limit, offset) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const appointmentsListed = yield Appointment_models_1.Appointment.findAll({ order: ["id"], limit: limit, offset: offset });

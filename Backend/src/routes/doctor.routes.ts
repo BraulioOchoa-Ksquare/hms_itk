@@ -1,6 +1,6 @@
 //Esta ruta usa la logica de handlers
 import { Router, Request, Response } from "express";
-import { profileDoctor } from "../handlers/doctor.handlers";
+import { getProfileDoctor, profileDoctor } from "../handlers/doctor.handlers";
 import { hasRole } from "../middlewares/hasRole";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 import { Appointment } from "../models/Appointment.models";
@@ -8,7 +8,7 @@ import { Appointment } from "../models/Appointment.models";
 export const DoctorRoute = Router();
 
 DoctorRoute.post(
-  '/profile',
+  '/profile/:userId',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -25,11 +25,29 @@ DoctorRoute.post(
   try {
     const profileCreated = await profileDoctor(professionalLicense, speciality, ProfileId);
      res.statusCode = 201;
-     res.send({profileCreated});
+     res.send(profileCreated);
   } catch (error) {
     res.status(500).send({error:"something went wrong"});
   }
 });
+
+DoctorRoute.get(
+  '/profile/:id/:userId/',
+  isAuthenticated,
+  hasRole({
+    roles: ["admin"],
+    allowSameUser: true,
+  }), // Solamente el SU pueda acceder
+  async (req: Request, res: Response) => {
+    const {id} = req.params;
+    try {
+       const doctorProfile = await getProfileDoctor(+id);
+       res.statusCode = 200;
+       res.send(doctorProfile);
+    } catch (error) {
+      res.status(500).send({error:"something went wrong"});
+    }
+  });
 
 DoctorRoute.get(
   '/search/:DoctorId',
@@ -58,7 +76,7 @@ DoctorRoute.get(
         order: [["id", orderString]]
       });
       res.statusCode = 201;
-      res.send({searchDoctorApp});
+      res.send(searchDoctorApp);
   } catch (error) {
     res.status(500).send({error:"something went wrong"});
   }

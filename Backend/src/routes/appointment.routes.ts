@@ -8,11 +8,11 @@ export const AppointmentRoute = Router();
 
 //========================= PATIENTS ==================================
 AppointmentRoute.post(
-  '/',
+  '/:userId',
   isAuthenticated,
   hasRole({
-    roles: ["patient"],
-    allowSameUser: false,
+    roles: [""],
+    allowSameUser: true,
   }), // Solamente el SU pueda acceder
   async (req: Request, res: Response) => {
   const {date, hour, DoctorId, PatientId} = req.body;
@@ -25,14 +25,15 @@ AppointmentRoute.post(
   try {
     const appointmentCreated = await createAppointment(date, hour, DoctorId, PatientId, true);
      res.statusCode = 201;
-     res.send({appointmentCreated});
+     res.send(appointmentCreated);
   } catch (error) {
+    console.log(error);
     res.status(500).send({error:"something went wrong"});
   }
 });
 
 AppointmentRoute.get(
-  '/list/:id',
+  '/list/:id/:userId',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -44,14 +45,14 @@ AppointmentRoute.get(
   try {
     const appointmentList = await appointmentListPatient(+id, limit? +limit: 10, offset? +offset: 0);
      res.statusCode = 201;
-     res.send({appointmentList});
+     res.send(appointmentList);
   } catch (error) {
     res.status(500).send({error:"something went wrong"});
   }
 });
 
 AppointmentRoute.get(
-  '/:id',
+  '/patient/:id/:userId',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -63,7 +64,7 @@ AppointmentRoute.get(
   try {
     const appointmentRead = await appointmentReadPatient(+id);
      res.statusCode = 201;
-     res.send({appointmentRead});
+     res.send(appointmentRead);
   } catch (error) {
     res.status(500).send({error:"something went wrong"});
   }
@@ -91,7 +92,7 @@ AppointmentRoute.patch(
 
 //========================= DOCTOR ==================================
 AppointmentRoute.get(
-  '/list/:id',
+  '/list/:id/:userId',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
@@ -103,7 +104,7 @@ AppointmentRoute.get(
   try {
     const appointmentList = await appointmentListDoctor(+id, limit ? +limit: 10, offset ? +offset: 0);
      res.statusCode = 201;
-     res.send({appointmentList});
+     res.send(appointmentList);
   } catch (error) {
     res.status(500).send({error:"something went wrong"});
   }
