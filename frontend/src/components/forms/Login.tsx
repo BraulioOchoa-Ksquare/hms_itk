@@ -61,7 +61,7 @@ export const Login = () => {
       } else if (role === "doctor") {
         await dispatch(getProfileDoctor());
       }
-      navigate("/");
+      navigate("/dashboard");
 
       // localStorage.getItem("token");
       // console.log(user);

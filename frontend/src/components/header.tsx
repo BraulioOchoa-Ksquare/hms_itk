@@ -1,7 +1,7 @@
 import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { clearStateAuth, selectUID } from "./slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../app/hook";
 import { clearStateDoctor } from "./slices/doctorSlice";
@@ -19,6 +19,7 @@ const NavBarComp = () => {
   const auth = Auth();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const page = useLocation();
 
   const logOut = () => {
     dispatch(clearStateAuth());
@@ -55,14 +56,18 @@ const NavBarComp = () => {
             )}
             {auth !== undefined && (
               <>
-                <Nav.Link as={Link} to={"/dashboard"}>
-                  Dashboard
-                </Nav.Link>
-                <Nav.Link as={Link} to={"/"}>
-                  Logout
-                </Nav.Link>
+                 {page.pathname !== "/dashboard" && (
+                  <Nav.Link as={Link} to={"/dashboard"}>
+                    Dashboard
+                  </Nav.Link>
+                )}
+
+                  <Nav.Link as={Link} to={"/"}>
+                    Logout
+                  </Nav.Link>
               </>
             )}
+
           </Nav>
         </Navbar.Collapse>
       </Container>
