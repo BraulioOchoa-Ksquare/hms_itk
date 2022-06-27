@@ -1,0 +1,26 @@
+body{
+  background-color: #11556e;
+}
+
+.doctorsContainer{
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: nowrap;
+  margin-top: 20px;
+}
+
+.doctorImgOp1{
+  border: 2px black solid;
+  border-radius: 10px;
+}
+
+.doctorImgOp2 img{
+  border: 2px black solid;
+  border-radius: 10px;
+}
+
+.doctorImgContainer{
+  width: 500px;
+  height: auto;
+  background-color: white;
+}

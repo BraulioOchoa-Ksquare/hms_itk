@@ -22,9 +22,11 @@ const createProfile = (uid, id, firstName, lastName, address, phoneNumber) => __
     }
 });
 exports.createProfile = createProfile;
-const profilePerId = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const profilePerId = (uid) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const profileId = yield Profile_model_1.Profile.findByPk(id);
+        const profileId = yield Profile_model_1.Profile.findOne({
+            where: { uid: uid }
+        });
         return profileId;
     }
     catch (error) {

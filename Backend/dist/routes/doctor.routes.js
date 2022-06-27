@@ -17,7 +17,7 @@ const hasRole_1 = require("../middlewares/hasRole");
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
 const Appointment_models_1 = require("../models/Appointment.models");
 exports.DoctorRoute = (0, express_1.Router)();
-exports.DoctorRoute.post('/profile', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.DoctorRoute.post('/profile/:userId', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -30,7 +30,22 @@ exports.DoctorRoute.post('/profile', isAuthenticated_1.isAuthenticated, (0, hasR
     try {
         const profileCreated = yield (0, doctor_handlers_1.profileDoctor)(professionalLicense, speciality, ProfileId);
         res.statusCode = 201;
-        res.send({ profileCreated });
+        res.send(profileCreated);
+    }
+    catch (error) {
+        res.status(500).send({ error: "something went wrong" });
+    }
+}));
+exports.DoctorRoute.get('/profile/:id/:userId/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: true,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const doctorProfile = yield (0, doctor_handlers_1.getProfileDoctor)(+id);
+        res.statusCode = 200;
+        res.send(doctorProfile);
     }
     catch (error) {
         res.status(500).send({ error: "something went wrong" });
@@ -60,7 +75,7 @@ exports.DoctorRoute.get('/search/:DoctorId', isAuthenticated_1.isAuthenticated, 
             order: [["id", orderString]]
         });
         res.statusCode = 201;
-        res.send({ searchDoctorApp });
+        res.send(searchDoctorApp);
     }
     catch (error) {
         res.status(500).send({ error: "something went wrong" });

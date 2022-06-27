@@ -16,9 +16,11 @@ export const createProfile = async (
     }
   };
 
-  export const profilePerId = async (id: number) => {
+  export const profilePerId = async (uid: string) => {
     try {
-      const profileId = await Profile.findByPk(id);
+      const profileId = await Profile.findOne({
+        where: {uid: uid}
+      });
       return profileId;
     } catch (error) {
       throw error;

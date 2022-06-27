@@ -5,7 +5,13 @@ import { hasRole } from "../middlewares/hasRole";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 export const ProfileRoute = Router();
 
-ProfileRoute.post('/', async (req: Request, res: Response) => {
+ProfileRoute.post('/:userId', 
+isAuthenticated,
+hasRole({
+  roles: ["admin"],
+  allowSameUser: true,
+}),
+async (req: Request, res: Response) => {
   const {uid, id, firstName, lastName, address, phoneNumber} = req.body;
 
   if (!uid || !firstName || !lastName || !address || !phoneNumber) {
@@ -16,26 +22,26 @@ ProfileRoute.post('/', async (req: Request, res: Response) => {
   try {
     const profileCreated = await createProfile(uid, id, firstName, lastName, address, phoneNumber);
      res.statusCode = 201;
-     res.send({profileCreated});
+     res.send(profileCreated);
   } catch (error) { 
     res.status(500).send({error:"something went wrong"});
   }
 });
 
 ProfileRoute.get(
-  '/:id',
+  '/:userId',
   isAuthenticated,
   hasRole({
     roles: ["admin"],
-    allowSameUser: false,
+    allowSameUser: true,
   }), // Solamente el SU pueda acceder
   async (req: Request, res: Response) => {
-  const {id} = req.params;
+  const {userId} = req.params;
 
   try {
-    const profileId = await profilePerId(+id);
+    const profileId = await profilePerId(userId);
      res.statusCode = 201;
-     res.send({profileId});
+     res.send(profileId);
   } catch (error) {
     res.status(500).send({error:"something went wrong"});
   }

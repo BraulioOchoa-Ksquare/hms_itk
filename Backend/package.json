@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"tsc --watch \" \" nodemon dist/server.js \" ",
-    "lint": "eslint . --fix"
+    "dev": "concurrently \"tsc --watch \" \" nodemon dist/server.js \" "
   },
   "keywords": [],
   "author": "",
@@ -26,7 +25,6 @@
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
     "concurrently": "^7.2.0",
-    "eslint": "^8.17.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
     "nodemon": "^2.0.16",

@@ -1,5 +1,6 @@
 //logica
 import { Patient } from "../models/Patient.model";
+import { Profile } from "../models/Profile.model";
 
 export const patientProfile = async (
   gender: string,
@@ -13,3 +14,18 @@ export const patientProfile = async (
       throw error;
     }
   };
+
+  export const getProfilePatient = async (id: number) => {
+    try {
+      const getProfilePatient = await Patient.findOne({
+        where: {ProfileId: id},
+        include: [{
+          model: Profile,
+          required: true
+        }]
+      });
+      return getProfilePatient;
+    } catch (error) {
+      throw error
+    }
+  }

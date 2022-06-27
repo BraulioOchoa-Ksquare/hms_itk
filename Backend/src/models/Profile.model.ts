@@ -27,7 +27,7 @@ export const initProfileModel = (sequelize: Sequelize) => {
         allowNull: false,
        },
 
-      id: { 
+      id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,

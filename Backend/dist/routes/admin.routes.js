@@ -21,19 +21,15 @@ exports.AdminRoute.post('/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.ha
     roles: [""],
     allowSameUser: false,
 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { displayName, email, password, role } = req.body;
-    if (!displayName || !email || !password || !role) {
+    const { displayName, email, password } = req.body;
+    if (!displayName || !email || !password) {
         res.status(400);
         return res.send({ error: "All fields are required" });
     }
-    if (role !== "admin") {
-        res.status(400);
-        return res.send({ error: "Invalid role" });
-    }
     try {
-        const userCreated = yield (0, methods_1.createUser)(displayName, email, password, role);
+        const userCreated = yield (0, methods_1.createUser)(displayName, email, password, "admin");
         res.statusCode = 201;
-        res.send({ userCreated });
+        res.send(userCreated);
     }
     catch (error) {
         res.status(500).send({ error: "something went wrong" });
@@ -51,13 +47,13 @@ exports.AdminRoute.post('/userDoctor', isAuthenticated_1.isAuthenticated, (0, ha
     try {
         const userDoctorCreated = yield (0, methods_1.createUser)(displayName, email, password, "doctor");
         res.statusCode = 201;
-        res.send({ userDoctorCreated });
+        res.send(userDoctorCreated);
     }
     catch (error) {
         res.status(500).send({ error: "something went wrong" });
     }
 }));
-exports.AdminRoute.patch('/activateUser/:uid', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+exports.AdminRoute.patch('/activateUser/:userId', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
     roles: ["admin"],
     allowSameUser: true,
 }), // Solamente el SU pueda acceder
@@ -66,7 +62,7 @@ exports.AdminRoute.patch('/activateUser/:uid', isAuthenticated_1.isAuthenticated
     try {
         const userActivated = yield (0, admin_handlers_1.disableUser)(uid, false);
         res.statusCode = 201;
-        res.send({ userActivated });
+        res.send(userActivated);
     }
     catch (error) {
         res.status(500).send({ error: "something went wrong" });
@@ -81,7 +77,35 @@ exports.AdminRoute.get('/appointmentList/', isAuthenticated_1.isAuthenticated, (
     try {
         const appointmentsListed = yield (0, admin_handlers_1.appointmentListAll)(limit ? +limit : 10, offset ? +offset : 0);
         res.statusCode = 201;
-        res.send({ appointmentsListed });
+        res.send(appointmentsListed);
+    }
+    catch (error) {
+        res.status(500).send({ error: "something went wrong" });
+    }
+}));
+exports.AdminRoute.get('/patients/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin"],
+    allowSameUser: false,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const listPatients = yield (0, admin_handlers_1.getListPatients)();
+        res.statusCode = 200;
+        res.send(listPatients);
+    }
+    catch (error) {
+        res.status(500).send({ error: "something went wrong" });
+    }
+}));
+exports.AdminRoute.get('/doctors/', isAuthenticated_1.isAuthenticated, (0, hasRole_1.hasRole)({
+    roles: ["admin", "patient"],
+    allowSameUser: false,
+}), // Solamente el SU pueda acceder
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const listDoctors = yield (0, admin_handlers_1.getListDoctors)();
+        res.statusCode = 200;
+        res.send(listDoctors);
     }
     catch (error) {
         res.status(500).send({ error: "something went wrong" });
@@ -111,7 +135,7 @@ exports.AdminRoute.get('/search/', isAuthenticated_1.isAuthenticated, (0, hasRol
             order: [["id", orderString]]
         });
         res.statusCode = 201;
-        res.send({ searchAdminApp });
+        res.send(searchAdminApp);
     }
     catch (error) {
         res.status(500).send({ error: "something went wrong" });
