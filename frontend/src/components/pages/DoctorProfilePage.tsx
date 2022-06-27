@@ -49,7 +49,6 @@ export const DoctorProfile = () => {
               <div className="titles">
                 <p>First Name:</p>
                 <p>Last Name:</p>
-                <p>Gender:</p>
                 <p>Address:</p>
                 <p>Phone Number:</p>
                 <p>Professional License:</p>
